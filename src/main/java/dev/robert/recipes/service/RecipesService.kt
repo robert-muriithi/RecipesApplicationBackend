@@ -8,6 +8,6 @@ import dev.robert.recipes.model.Recipe
 
 @Service
 class RecipesService(@Autowired private val recipeRepository: RecipesRepository) {
-        fun getAllRecipes() = recipeRepository.findAll()
-        fun addRecipe(recipe: Recipe) = recipeRepository.save(recipe)
+        fun getAllRecipes(): MutableList<Recipe> = recipeRepository.findAll()
+        fun addRecipe(recipe: Recipe): Recipe = recipeRepository.save(recipe)
 }
