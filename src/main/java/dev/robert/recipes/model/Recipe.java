@@ -4,10 +4,8 @@ package dev.robert.recipes.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -19,6 +17,11 @@ public class Recipe {
     private Long id;
     private String name;
     private String description;
-    private String ingredients;
-    private String recipeProcedure;
+    private String servings;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Ingredients.class)
+    private List<Ingredients> ingredients;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Steps.class)
+    private List<Steps> steps;
+    @Lob
+    private Byte[] image;
 }

@@ -18,7 +18,7 @@ public class RecipesController {
     private RecipesService recipeService;
 
     @PostMapping("add")
-    public ResponseEntity<EntityResponse<Recipe>> addRecipe(@RequestBody Recipe recipe) {
+    public ResponseEntity<EntityResponse<?>> addRecipe(@RequestBody Recipe recipe) {
         EntityResponse<Recipe> entityResponse = new EntityResponse<>();
         try {
             Recipe savedRecipe = recipeService.addRecipe(recipe);
@@ -52,11 +52,34 @@ public class RecipesController {
     }
 
     @PutMapping("update/{recipeId}")
-    public ResponseEntity<EntityResponse<?>> updateRecipe(@PathVariable Long recipeId, @RequestBody Recipe body) {
+    public ResponseEntity<EntityResponse<?>> updateRecipeName(@PathVariable Long recipeId, @RequestParam String name) {
         EntityResponse<Recipe> entityResponse = new EntityResponse<>();
         try {
-            Recipe recipe = recipeService.updateRecipeName(recipeId, body.getName());
+            Recipe recipe = recipeService.updateRecipeName(recipeId, name);
             entityResponse.setMessage("Recipe updated");
+            entityResponse.setStatusCode(HttpStatus.OK.value());
+            entityResponse.setPayload(recipe);
+            return new ResponseEntity<>(entityResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            entityResponse.setMessage(e.getMessage());
+            entityResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            entityResponse.setPayload(null);
+            return new ResponseEntity<>(entityResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<EntityResponse<?>> searchRecipe(@RequestParam String recipeName) {
+        EntityResponse<Recipe> entityResponse = new EntityResponse<>();
+        try {
+            Recipe recipe = recipeService.findRecipeByName(recipeName);
+            if(recipe == null) {
+                entityResponse.setMessage("Recipe not found");
+                entityResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
+                entityResponse.setPayload(null);
+                return new ResponseEntity<>(entityResponse, HttpStatus.NOT_FOUND);
+            }
+            entityResponse.setMessage("Recipe found");
             entityResponse.setStatusCode(HttpStatus.OK.value());
             entityResponse.setPayload(recipe);
             return new ResponseEntity<>(entityResponse, HttpStatus.OK);
