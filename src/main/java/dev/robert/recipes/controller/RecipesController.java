@@ -34,8 +34,6 @@ public class RecipesController {
         }
     }
 
-
-
     @GetMapping("all")
     public ResponseEntity<EntityResponse<?>> getAllRecipes() {
         EntityResponse<List<Recipe>> entityResponse = new EntityResponse<>();
@@ -44,6 +42,23 @@ public class RecipesController {
             entityResponse.setMessage("Recipes fetched");
             entityResponse.setStatusCode(HttpStatus.OK.value());
             entityResponse.setPayload(recipes);
+            return new ResponseEntity<>(entityResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            entityResponse.setMessage(e.getMessage());
+            entityResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            entityResponse.setPayload(null);
+            return new ResponseEntity<>(entityResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("update/{recipeId}")
+    public ResponseEntity<EntityResponse<?>> updateRecipe(@PathVariable Long recipeId, @RequestBody Recipe body) {
+        EntityResponse<Recipe> entityResponse = new EntityResponse<>();
+        try {
+            Recipe recipe = recipeService.updateRecipeName(recipeId, body.getName());
+            entityResponse.setMessage("Recipe updated");
+            entityResponse.setStatusCode(HttpStatus.OK.value());
+            entityResponse.setPayload(recipe);
             return new ResponseEntity<>(entityResponse, HttpStatus.OK);
         } catch (Exception e) {
             entityResponse.setMessage(e.getMessage());

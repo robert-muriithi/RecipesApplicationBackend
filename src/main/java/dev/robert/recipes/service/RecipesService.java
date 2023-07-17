@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -27,25 +28,25 @@ public class RecipesService {
         }
     }
 
-    /*public EntityResponse addRecipe(Recipe recipe) {
-        EntityResponse<Recipe> entityResponse = new EntityResponse<>();
-        try {
-            Recipe savedRecipe = recipeRepo.save(recipe);
-            entityResponse.setMessage("Recipe added");
-            entityResponse.setStatusCode(HttpStatus.CREATED.value());
-            entityResponse.setPayload(savedRecipe);
-            return entityResponse;
-        } catch (Exception e) {
-            entityResponse.setMessage(e.getMessage());
-            entityResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-            entityResponse.setPayload(null);
-        }
-        return entityResponse;
-    }*/
 
     public List<Recipe> getAllRecipes() {
         try {
             return recipeRepo.findAll();
+        } catch (Exception e) {
+            log.info("Catched Error {} " + e);
+            return null;
+        }
+    }
+
+    public Recipe updateRecipeName(Long recipeId, String recipeName) {
+        try {
+            Optional<Recipe> recipe = recipeRepo.findById(recipeId);
+            if(recipe.isPresent()) {
+                Recipe recipeToUpdate = recipe.get();
+                recipeToUpdate.setName(recipeName);
+                return recipeRepo.save(recipeToUpdate);
+            }
+            return null;
         } catch (Exception e) {
             log.info("Catched Error {} " + e);
             return null;
